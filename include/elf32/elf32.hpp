@@ -13,9 +13,14 @@
  * limitations under the License.
  */
 
+#include <boost/filesystem.hpp>
 #include <cstdint>
+#include <string>
+#include <vector>
 
 #define EI_NIDENT (16)
+
+namespace fs = boost::filesystem;
 
 namespace Elf32 {
     using Addr_t = uint32_t;
@@ -63,5 +68,19 @@ namespace Elf32 {
         Word_t sh_info;
         Word_t sh_addralign;
         Word_t sh_entsize;
+    };
+
+    class Elf32 {
+        private:
+            size_t size; /* size of memory mapped file */
+            Ehdr* e_header;
+            Phdr* p_header;
+            Shdr* s_header;
+            char* str_tbl;
+        public:
+            Elf32(fs::path path);
+            ~Elf32();
+            void read_section(std::string name, unsigned char* buf, size_t len, off_t offset);
+            void write_section(std::string name, const unsigned char* buf, size_t len, off_t offset);
     };
 }
